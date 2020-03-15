@@ -1,6 +1,4 @@
-﻿using System.IO;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
+﻿using iText.Kernel.Pdf;
 
 namespace MergePDF
 {
@@ -8,33 +6,19 @@ namespace MergePDF
     {
         public void MergePDF(string[] fileNames, string outFile)
         {
-            Document document = new Document();
-            //create newFileStream object which will be disposed at the end
-            FileStream newFileStream = new FileStream(outFile, FileMode.Create);
-            // step 2: we create a writer that listens to the document
-            PdfCopy writer = new PdfCopy(document, newFileStream);
+            var writer = new PdfWriter(outFile);
+            var pdfDoc = new PdfDocument(writer);
 
-            // step 3: we open the document
-            document.Open();
+            pdfDoc.InitializeOutlines();
 
             foreach (string fileName in fileNames)
             {
-                // we create a reader for a certain document
-                PdfReader reader = new PdfReader(fileName);
-                reader.ConsolidateNamedDestinations();
-
-                // step 4: we add content
-                for (int i = 1; i <= reader.NumberOfPages; i++)
-                {
-                    writer.AddPage(writer.GetImportedPage(reader, i));
-                }
-
-                reader.Close();
+                var addedDoc = new PdfDocument(new PdfReader(fileName));
+                addedDoc.CopyPagesTo(1, addedDoc.GetNumberOfPages(), pdfDoc);
+                addedDoc.Close();
             }
 
-            // step 5: we close the document and writer
-            writer.Close();
-            document.Close();
+            pdfDoc.Close();
         }
     }
 }
