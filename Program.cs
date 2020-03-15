@@ -6,17 +6,25 @@ namespace MergePDF
     {
         static void Main(string[] args)
         {
-            string[] filesNames = {
-                "/root/file1.pdf",
-                "/root/file2.pdf"
-            };
+            try
+            {
+                string[] filesNames = {
+                    "/root1/file.pdf",
+                    "/root2/file.pdf",
+                };
 
-            string outFile = "/finalRoot/file.pdf";
+                string outFile = "/finalRoot/file.pdf";
 
-            var pdf = new PDF();
-            pdf.MergePDF(filesNames, outFile);
+                var pdf = new PDF();
+                pdf.MergePDF(filesNames, outFile);
 
-            Console.WriteLine("Hello World!");
+                Console.WriteLine("successful merger");
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+                throw;
+            }
         }
     }
 }
